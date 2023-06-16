@@ -1,481 +1,420 @@
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-/// Strings
+class LimeData {
+  int weight;
+  TimeOfDay startTime;
+  TimeOfDay endTime;
 
-const appBarTitle = 'Lime Consumption Calculator';
-const appTitle = 'Lime Calculation';
-const appBarTitleBoiler1 = 'Boiler-1';
-const appBarTitleBoiler2 = 'Boiler-2';
+  LimeData(
+      {required this.weight, required this.startTime, required this.endTime});
+}
 
-/// MyApp Class
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: appTitle,
+      title: 'Lime Data',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const BottomNavBar(),
+      home: const LimeDataForm(),
     );
   }
 }
 
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+class LimeDataForm extends StatefulWidget {
+  const LimeDataForm({super.key});
 
   @override
-  State<BottomNavBar> createState() => _BottomNavBarState();
+  State<LimeDataForm> createState() => _LimeDataFormState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
-  static const List<Destination> allDestinations = [
-    Destination(
-      index: 0,
-      title: 'Boiler-1',
-      icon: Icons.home,
-      color: Colors.orange,
-    ),
-    Destination(
-      index: 1,
-      title: 'Boiler-2',
-      icon: Icons.business,
-      color: Colors.blue,
-    ),
-  ];
-
-  // late final List<GlobalKey<NavigatorState>> navigatorKeys;
-  // late final List<GlobalKey> destinationKeys;
-  // late final List<AnimationController> destinationFaders;
-  // late final List<Widget> destinationViews;
-  int _selectedIndex = 0;
-
-  // final List<Widget> _pages = [
-  //   const Boiler1(),
-  //   const Boiler2(),
-  // ];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   navigatorKeys = List<GlobalKey<NavigatorState>>.generate(
-  //       allDestinations.length, (int index) => GlobalKey()).toList();
-  //   // destinationFaders =
-  //   destinationViews = allDestinations.map((Destination destination) {
-  //     return DestinationView(
-  //       destination: destination,
-  //       navigatorKey: navigatorKeys[destination.index],
-  //     );
-  //   }).toList();
-  // }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
+class _LimeDataFormState extends State<LimeDataForm> {
+  List<LimeData> limeDataList = [];
+  int totalWeight = 0;
+  Duration totalDuration = const Duration();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      //   title: const Text(appBarTitle),
-      // ),
-      // body: _pages[_selectedIndex],
-      body: <Widget>[const Boiler1(), const Boiler2()][_selectedIndex],
-      // body: SafeArea(
-      //   top: false,
-      //   // child: Stack(
-      //   //   children: [
-      //   //     allDestinations.map((Destination destination) {
-      //   //       final int index = destination.index;
-      //   //       final Widget view = destinationViews[index];
-      //   //       if (index == _selectedIndex) {
-
-      //   //       }
-
-      //   //     }).toList()
-      //   //   ],
-      //   // ),
-      // ),
-      bottomNavigationBar: NavigationBar(
-        // backgroundColor: Colors.blueAccent,
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (int index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: allDestinations.map((Destination destination) {
-          return NavigationDestination(
-            icon: Icon(destination.icon, color: destination.color),
-            label: destination.title,
-          );
-        }).toList(),
-
-        // items: [
-        //   BottomNavigationBarItem(
-        //     icon: const Icon(Icons.one_k),
-        //     label: 'Boiler-1',
-        //     tooltip: 'Boiler-1',
-        //     backgroundColor: Colors.grey.shade100,
-        //   ),
-        //   BottomNavigationBarItem(
-        //     icon: const Icon(Icons.two_k),
-        //     label: 'Boiler-2',
-        //     tooltip: 'Boiler-2',
-        //     backgroundColor: Colors.cyan.shade200,
-        //   ),
-        // ],
-      ),
-    );
-  }
-}
-
-/// Boiler-1
-class Boiler1 extends StatefulWidget {
-  const Boiler1({super.key});
-
-  @override
-  State<Boiler1> createState() => _Boiler1State();
-}
-
-class _Boiler1State extends State<Boiler1> {
-  TextEditingController limeWeightController = TextEditingController();
-  TextEditingController startTimeController = TextEditingController();
-  TextEditingController endTimeController = TextEditingController();
-
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        startTimeController.text = picked.format(context);
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade300,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text(
-          appBarTitleBoiler1,
-        ),
+        title: const Text('Lime Data'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Flex(
-                direction: Axis.horizontal,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Enter Lime Data',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: limeDataList.length,
+                  itemBuilder: (context, index) {
+                    return LimeDataField(
+                      limeData: limeDataList[index],
+                      onDelete: () {
+                        setState(() {
+                          limeDataList.removeAt(index);
+                          calculateTotals();
+                        });
+                      },
+                      onWeightChanged: (int weight) {
+                        setState(() {
+                          limeDataList[index].weight = weight;
+                          calculateTotals();
+                        });
+                      },
+                      onStartTimeChanged: (TimeOfDay startTime) {
+                        setState(() {
+                          limeDataList[index].startTime = startTime;
+                          calculateTotals();
+                        });
+                      },
+                      onEndTimeChanged: (TimeOfDay endTime) {
+                        setState(() {
+                          limeDataList[index].endTime = endTime;
+                          calculateTotals();
+                        });
+                      },
+                      onEdit: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditLimeDataScreen(
+                              limeData: limeDataList[index],
+                              onUpdate: (LimeData updatedData) {
+                                setState(() {
+                                  limeDataList[index] = updatedData;
+                                  calculateTotals();
+                                });
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Flexible(
-                    child: TextField(
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Weight (tons)',
-                        hintText: '50',
-                        prefix: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.monitor_weight_outlined),
-                        ),
-                      ),
-                    ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        limeDataList.add(LimeData(
+                            weight: 0,
+                            startTime: TimeOfDay.now(),
+                            endTime: TimeOfDay.now()));
+                      });
+                    },
+                    child: const Text('Add Data'),
                   ),
-                  const SizedBox(width: 5),
-                  Flexible(
-                    child: TextField(
-                      controller: startTimeController,
-                      keyboardType: TextInputType.datetime,
-                      decoration: InputDecoration(
-                        labelText: 'Start Time',
-                        hintText: '00:00',
-                        prefix: IconButton(
-                          onPressed: () => _selectTime(context),
-                          icon: const Icon(Icons.access_time),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Flexible(
-                    child: TextField(
-                      controller: endTimeController,
-                      keyboardType: TextInputType.datetime,
-                      decoration: InputDecoration(
-                        labelText: 'End Time',
-                        hintText: '23:59',
-                        prefix: IconButton(
-                          onPressed: () => _selectTime(context),
-                          icon: const Icon(Icons.access_time),
-                        ),
-                      ),
-                    ),
+                  const SizedBox(width: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        calculateTotals();
+                        if (totalDuration.inHours >= 24) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Duration Exceeded'),
+                                content: const Text(
+                                    'The total duration cannot exceed 24 hours.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Calculation Results'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Total Lime Weight: $totalWeight'),
+                                    Text(
+                                        'Total Duration: ${totalDuration.inHours} hours and ${totalDuration.inMinutes.remainder(60)} minutes'),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('OK'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }
+                    },
+                    child: const Text('Calculate'),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              OutlinedButton(
-                onPressed: () {},
-                child: const Text('Add Data'),
-              )
             ],
           ),
         ),
       ),
     );
   }
+
+  void calculateTotals() {
+    totalWeight = 0;
+    totalDuration = const Duration();
+
+    for (var limeData in limeDataList) {
+      totalWeight += limeData.weight;
+      DateTime startDateTime = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        limeData.startTime.hour,
+        limeData.startTime.minute,
+      );
+      DateTime endDateTime = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        limeData.endTime.hour,
+        limeData.endTime.minute,
+      );
+      totalDuration += endDateTime.difference(startDateTime);
+    }
+  }
 }
 
-/// Boiler-2
-class Boiler2 extends StatefulWidget {
-  const Boiler2({
+class LimeDataField extends StatelessWidget {
+  final LimeData limeData;
+  final VoidCallback onDelete;
+  final ValueChanged<int> onWeightChanged;
+  final ValueChanged<TimeOfDay> onStartTimeChanged;
+  final ValueChanged<TimeOfDay> onEndTimeChanged;
+  final VoidCallback onEdit;
+
+  const LimeDataField({
     super.key,
-    // required this.destination,
+    required this.limeData,
+    required this.onDelete,
+    required this.onWeightChanged,
+    required this.onStartTimeChanged,
+    required this.onEndTimeChanged,
+    required this.onEdit,
   });
 
-  // final Destination destination;
-
   @override
-  State<Boiler2> createState() => _Boiler2State();
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Lime Data',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: limeData.weight.toString(),
+                    decoration: const InputDecoration(labelText: 'Weight'),
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter the lime weight';
+                      }
+                      return null;
+                    },
+                    onChanged: (value) {
+                      onWeightChanged(int.parse(value));
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showTimePicker(
+                        context: context,
+                        initialTime: limeData.startTime,
+                      ).then((pickedTime) {
+                        if (pickedTime != null) {
+                          onStartTimeChanged(pickedTime);
+                        }
+                      });
+                    },
+                    child: Text(
+                        'Start Time: ${limeData.startTime.format(context)}'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showTimePicker(
+                        context: context,
+                        initialTime: limeData.endTime,
+                      ).then((pickedTime) {
+                        if (pickedTime != null) {
+                          onEndTimeChanged(pickedTime);
+                        }
+                      });
+                    },
+                    child:
+                        Text('End Time: ${limeData.endTime.format(context)}'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                IconButton(
+                  onPressed: onEdit,
+                  icon: const Icon(Icons.edit),
+                ),
+                IconButton(
+                  onPressed: onDelete,
+                  icon: const Icon(Icons.delete),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _Boiler2State extends State<Boiler2> {
-  final _formKey = GlobalKey<FormState>();
-  final List<String> _data = [];
+class EditLimeDataScreen extends StatefulWidget {
+  final LimeData limeData;
+  final ValueChanged<LimeData> onUpdate;
 
-  TextEditingController limeWeightController = TextEditingController();
-  TextEditingController startTimeController = TextEditingController();
-  TextEditingController endTimeController = TextEditingController();
+  const EditLimeDataScreen(
+      {super.key, required this.limeData, required this.onUpdate});
+
+  @override
+  State<EditLimeDataScreen> createState() => _EditLimeDataScreenState();
+}
+
+class _EditLimeDataScreenState extends State<EditLimeDataScreen> {
+  late LimeData _limeData;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    // limeWeightController = TextEditingController(text: '50');
-    // startTimeController = TextEditingController(text: '00:00');
-    // endTimeController = TextEditingController(text: '23:59');
-  }
-
-  @override
-  void dispose() {
-    limeWeightController.dispose();
-    startTimeController.dispose();
-    endTimeController.dispose();
-    super.dispose();
+    _limeData = widget.limeData;
   }
 
   @override
   Widget build(BuildContext context) {
-    // final int intValue = 0;
-    // final ThemeData theme = Theme.of(context);
-    // final time =
-    //     TimePicker.selectTime(context, const TimeOfDay(hour: 00, minute: 00));
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: theme.colorScheme.inversePrimary,
-        title: const Text(appBarTitleBoiler2),
-        // backgroundColor: widget.destination.color,
+        title: const Text('Edit Lime Data'),
       ),
-      backgroundColor: Colors.cyan.shade400,
-      body: Container(
-        padding: const EdgeInsets.all(10.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: limeWeightController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: 'Weight (tons)',
-                        hintText: '50',
-                        prefixIcon: IconButton(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('How much is lime weight'),
-                                  content: NumberPicker(
-                                    value: limeWeightController.text != ""
-                                        ? int.parse(limeWeightController.text)
-                                        : 0,
-                                    minValue: 0,
-                                    maxValue: 500,
-                                    step: 1,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        limeWeightController.text =
-                                            value.toString();
-                                      });
-                                    },
-                                  ),
-                                );
-                              },
-                            );
-                            // showModalBottomSheet(
-                            //   context: context,
-                            //   builder: (BuildContext context) {
-                            //     return NumberPicker(
-                            //       minValue: 0,
-                            //       maxValue: 200,
-                            //       value: limeWeightController.text != ""
-                            //           ? int.parse(limeWeightController.text)
-                            //           : 0,
-                            //       onChanged: (value) {
-                            //         setState(() {
-                            //           limeWeightController.text =
-                            //               value.toString();
-                            //         });
-                            //       },
-                            //     );
-                            //   },
-                            // );
-
-                            /// [change]
-                            // NumberPicker(
-                            //   value: intValue,
-                            //   minValue: 0,
-                            //   maxValue: 200,
-                            //   step: 10,
-                            //   onChanged: (value) => setState(() {
-                            //     limeWeightController.text = value.toString();
-                            //   }),
-                            //   // onChanged: (value) {
-                            //   //   // limeWeightController.text = value.toString();
-                            //   //   return value;
-                            //   // },
-                            // );
-                            // if (result != null) {
-                            //   limeWeightController.text = result.toString();
-                            // }
-                          },
-                          icon: const Icon(Icons.monitor_weight_outlined),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: TextFormField(
-                      controller: startTimeController,
-                      keyboardType: TextInputType.datetime,
-                      decoration: InputDecoration(
-                        labelText: 'Start Time',
-                        hintText: '00:00',
-                        border: const OutlineInputBorder(),
-                        prefixIcon: IconButton(
-                          onPressed: () async {
-                            final TimeOfDay? pickedTime =
-                                await TimePickerHelper.selectTime(context,
-                                    initialTime: TimeOfDay.now());
-                            if (pickedTime != null) {
-                              setState(() {
-                                startTimeController.text =
-                                    pickedTime.format(context);
-                              });
-                            }
-                          },
-                          icon: const Icon(Icons.access_time),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: TextFormField(
-                      // initialValue: '23:59',
-                      controller: endTimeController,
-                      keyboardType: TextInputType.datetime,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: 'End Time',
-                        hintText: '23:59',
-                        prefixIcon: IconButton(
-                          onPressed: () async {
-                            final TimeOfDay? pickedTime =
-                                await TimePickerHelper.selectTime(context,
-                                    initialTime: TimeOfDay.now());
-                            if (pickedTime != null) {
-                              setState(() {
-                                endTimeController.text =
-                                    pickedTime.format(context);
-                              });
-                            }
-                          },
-                          icon: const Icon(Icons.access_time),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
+              const Text(
+                'Edit Lime Data',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _limeData.weight.toString(),
+                decoration: const InputDecoration(labelText: 'Weight'),
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter the lime weight';
+                  }
+                  return null;
+                },
+                onSaved: (value) {
+                  _limeData.weight = int.parse(value!);
+                },
+              ),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState?.validate() == true) {
-                    setState(() {
-                      _data.add(limeWeightController.text);
-                      _data.add(startTimeController.text);
-                      _data.add(endTimeController.text);
-                      limeWeightController.clear();
-                      startTimeController.clear();
-                      endTimeController.clear();
-                    });
-                  }
+                  showTimePicker(
+                    context: context,
+                    initialTime: _limeData.startTime,
+                  ).then((pickedTime) {
+                    if (pickedTime != null) {
+                      setState(() {
+                        _limeData.startTime = pickedTime;
+                      });
+                    }
+                  });
                 },
-                child: const Text('Add Data'),
+                child:
+                    Text('Start Time: ${_limeData.startTime.format(context)}'),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: _data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Row(
-                    children: [
-                      ListTile(
-                        title: Text(_data[index]),
-                      ),
-                    ],
-                  );
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  showTimePicker(
+                    context: context,
+                    initialTime: _limeData.endTime,
+                  ).then((pickedTime) {
+                    if (pickedTime != null) {
+                      setState(() {
+                        _limeData.endTime = pickedTime;
+                      });
+                    }
+                  });
                 },
+                child: Text('End Time: ${_limeData.endTime.format(context)}'),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        widget.onUpdate(_limeData);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
               ),
             ],
           ),
@@ -484,113 +423,3 @@ class _Boiler2State extends State<Boiler2> {
     );
   }
 }
-
-class Destination {
-  const Destination(
-      {required this.index,
-      required this.title,
-      required this.icon,
-      required this.color});
-
-  final int index;
-  final String title;
-  final IconData icon;
-  final MaterialColor color;
-}
-
-// class TimePicker {
-//   static Future<TimeOfDay?> selectTime(
-//     BuildContext context,
-//     TimeOfDay initialTime,
-//   ) async {
-//     final TimeOfDay? picked = await showTimePicker(
-//       context: context,
-//       initialTime: initialTime,
-//     );
-//     return picked;
-//   }
-// }
-
-class TimePickerHelper {
-  static Future<TimeOfDay?> selectTime(
-    BuildContext context, {
-    required TimeOfDay initialTime,
-  }) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: initialTime,
-    );
-    return picked;
-    // }
-  }
-}
-
-// class NumberPickerHelper {
-//   static Future<int?> selectNumber(
-//     BuildContext context, {
-//     required int minValue,
-//     required int maxValue,
-//     required int step,
-//     required int initialIntegerValue,
-//   }) async {
-//     final int? result = await NumberPicker(
-//       context: context,
-//       minValue: minValue,
-//       maxValue: maxValue,
-//       step: step,
-//       initialIntegerValue: initialIntegerValue,
-//     );
-//     return result;
-//   }
-// }
-
-    // if (picked != null) {
-    //   final localizations = MaterialLocalizations.of(context);
-    //   String formattedTime = localizations.formatTimeOfDay(picked, alwaysUse24HourFormat: true);
-    // }
-
-
-
-
-// class DestinationView extends StatefulWidget {
-//   const DestinationView({
-//     super.key,
-//     required this.destination,
-//     required this.navigatorKey,
-//   });
-
-//   final Destination destination;
-//   final Key navigatorKey;
-
-//   @override
-//   State<DestinationView> createState() => _DestinationViewState();
-// }
-
-// class _DestinationViewState extends State<DestinationView> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Navigator(
-//       key: widget.navigatorKey,
-//       onGenerateRoute: (RouteSettings settings) {
-//         return MaterialPageRoute<void>(
-//           settings: settings,
-//           builder: (BuildContext context) {
-//             switch (settings.name) {
-//               case '/':
-//                 // return Boiler1Page(destination: widget.destination);
-//                 return const Placeholder();
-//               case '/boiler2':
-//                 return Boiler2(
-//                     // destination: widget.destination,
-//                     );
-//               // return Placeholder();
-//             }
-//             assert(false);
-//             return const SizedBox();
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
-
