@@ -223,11 +223,17 @@ class LimeDataField extends StatelessWidget {
                     decoration: const InputDecoration(labelText: 'Weight'),
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter the lime weight';
+                      if (value?.isEmpty ?? true) {
+                        return 'Please enter Lime Weight';
                       }
                       return null;
                     },
+                    // validator: (value) {
+                    //   if (value!.isEmpty) {
+                    //     return 'Please enter the lime weight';
+                    //   }
+                    //   return null;
+                    // },
                     onChanged: (value) {
                       onWeightChanged(int.parse(value));
                     },

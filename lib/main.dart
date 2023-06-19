@@ -246,6 +246,12 @@ class LimeDataField extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: [
+                // const SizedBox(
+                //   height: 200,
+                //   child: Column(
+                //     children: [],
+                //   ),
+                // ),
                 Expanded(
                   child: TextFormField(
                     initialValue: limeData.weight.toString(),
@@ -258,7 +264,8 @@ class LimeDataField extends StatelessWidget {
                       return null;
                     },
                     onChanged: (value) {
-                      onWeightChanged(int.parse(value));
+                      // onWeightChanged(int.parse(value));
+                      onWeightChanged(int.tryParse(value) ?? 0);
                     },
                   ),
                 ),
