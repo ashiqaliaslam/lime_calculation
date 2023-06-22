@@ -5,7 +5,7 @@ void main() {
 }
 
 class LimeData {
-  int weight;
+  double weight;
   TimeOfDay startTime;
   TimeOfDay endTime;
 
@@ -15,6 +15,21 @@ class LimeData {
     required this.endTime,
   });
 }
+
+// class LimeDataForm extends StatefulWidget {
+//   const LimeDataForm({super.key});
+
+//   @override
+//   State<LimeDataForm> createState() => _LimeDataFormState();
+// }
+
+// class _LimeDataFormState extends State<LimeDataForm> {
+//     List<LimeData> limeDataList = [];
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Placeholder();
+//   }
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -41,7 +56,7 @@ class LimeDataForm extends StatefulWidget {
 
 class _LimeDataFormState extends State<LimeDataForm> {
   List<LimeData> limeDataList = [];
-  int totalWeight = 0;
+  double totalWeight = 0;
   Duration totalDuration = const Duration();
   final _formKey = GlobalKey<FormState>();
 
@@ -93,7 +108,7 @@ class _LimeDataFormState extends State<LimeDataForm> {
               //     color: Colors.black,
               //   ),
               // ),
-              if (totalDuration.inHours > 24)
+              if (totalDuration.inMinutes > 1440)
                 const Text(
                   'The total duration cannot exceed 24 hours.',
                   style: TextStyle(
@@ -133,33 +148,46 @@ class _LimeDataFormState extends State<LimeDataForm> {
               Expanded(
                 child: ListView.builder(
                   itemCount: limeDataList.length,
-                  itemBuilder: (context, index) {
-                    return LimeDataField(
-                      limeData: limeDataList[index],
-                      onDelete: () {
+                  itemBuilder: (BuildContext context, int index) {
+                    return Dismissible(
+                      key: ValueKey(limeDataList[index]),
+                      onDismissed: (DismissDirection direction) {
                         setState(() {
                           limeDataList.removeAt(index);
                           calculateTotals();
                         });
                       },
-                      onWeightChanged: (int weight) {
-                        setState(() {
-                          limeDataList[index].weight = weight;
-                          calculateTotals();
-                        });
-                      },
-                      onStartTimeChanged: (TimeOfDay startTime) {
-                        setState(() {
-                          limeDataList[index].startTime = startTime;
-                          calculateTotals();
-                        });
-                      },
-                      onEndTimeChanged: (TimeOfDay endTime) {
-                        setState(() {
-                          limeDataList[index].endTime = endTime;
-                          calculateTotals();
-                        });
-                      },
+                      // onUpdate: (details) {
+                      //   calculateTotals();
+                      // },
+                      child: LimeDataField(
+                        limeData: limeDataList[index],
+                        onDelete: () {
+                          setState(() {
+                            limeDataList.removeAt(index);
+                            calculateTotals();
+                          });
+                        },
+                        // onDelete: Dismissible(),
+                        onWeightChanged: (weight) {
+                          setState(() {
+                            limeDataList[index].weight = weight;
+                            calculateTotals();
+                          });
+                        },
+                        onStartTimeChanged: (TimeOfDay startTime) {
+                          setState(() {
+                            limeDataList[index].startTime = startTime;
+                            calculateTotals();
+                          });
+                        },
+                        onEndTimeChanged: (TimeOfDay endTime) {
+                          setState(() {
+                            limeDataList[index].endTime = endTime;
+                            calculateTotals();
+                          });
+                        },
+                      ),
                     );
                   },
                 ),
@@ -244,7 +272,7 @@ class _LimeDataFormState extends State<LimeDataForm> {
   }
 
   void calculateTotals() {
-    totalWeight = 0;
+    totalWeight = 0.0;
     totalDuration = const Duration();
 
     for (var limeData in limeDataList) {
@@ -271,7 +299,7 @@ class _LimeDataFormState extends State<LimeDataForm> {
 class LimeDataField extends StatelessWidget {
   final LimeData limeData;
   final VoidCallback onDelete;
-  final ValueChanged<int> onWeightChanged;
+  final ValueChanged<double> onWeightChanged;
   final ValueChanged<TimeOfDay> onStartTimeChanged;
   final ValueChanged<TimeOfDay> onEndTimeChanged;
   // final VoidCallback onEdit;
@@ -285,8 +313,6 @@ class LimeDataField extends StatelessWidget {
     required this.onEndTimeChanged,
     // required this.onEdit,
   });
-
-  // TextEditingController limeWeightController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -313,24 +339,20 @@ class LimeDataField extends StatelessWidget {
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      // if (value!.isEmpty) {
-                      //   return 'Please enter the lime weight';
-                      // }
                       if (value?.isEmpty ?? true) {
                         return 'Please enter the lime weight';
                       }
                       return null;
                     },
                     onChanged: (value) {
-                      // value = value.trim();
-                      // if (value.isNotEmpty) {
-                      //   onWeightChanged(int.parse(value));
-                      // }
-                      onWeightChanged(int.tryParse(value) ?? 0);
+                      onWeightChanged(double.tryParse(value) ?? 0);
                     },
                   ),
                 ),
                 const SizedBox(width: 10),
+
+                /// [TimePickerButton] // TODO:
+                // Expanded(child: TimePickerButton(labelText: 'test btn', time:,)),
                 Expanded(
                   child: TimePickerButton(
                       labelText: 'Start Time',
@@ -350,14 +372,16 @@ class LimeDataField extends StatelessWidget {
                     const Text('Duration'),
                     Text(
                       limeConsumptionDuration,
-                      style: const TextStyle(fontSize: 24),
+                      style: const TextStyle(fontSize: 18),
                     ),
                   ],
                 ),
-                IconButton(
-                  onPressed: onDelete,
-                  icon: const Icon(Icons.delete),
-                ),
+
+                /// [delete icon]
+                // IconButton(
+                //   onPressed: onDelete,
+                //   icon: const Icon(Icons.delete),
+                // ),
               ],
             ),
           ],
@@ -385,6 +409,13 @@ class TimePickerButton extends StatelessWidget {
       children: [
         Text(labelText),
         OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            // padding: const EdgeInsets.all(5.0),
+            elevation: 10,
+          ),
           onPressed: () {
             showTimePicker(
               context: context,
