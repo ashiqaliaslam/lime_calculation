@@ -684,111 +684,111 @@ Widget errorText(String text) {
 
 
 /// [elevated button for calculate data]
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     if (_formKey.currentState!.validate()) {
-                    //       calculateTotals();
-                    //       if (totalDuration.inMinutes > 1440) {
-                    //         showDialog(
-                    //           context: context,
-                    //           builder: (BuildContext context) {
-                    //             return AlertDialog(
-                    //               title: smallText('Duration Exceeded'),
-                    //               content: Column(
-                    //                 mainAxisSize: MainAxisSize.min,
-                    //                 children: [
-                    //                   errorText(
-                    //                       '⛔️ The total duration cannot exceed 24 hours.'),
-                    //                   Row(
-                    //                     mainAxisAlignment:
-                    //                         MainAxisAlignment.center,
-                    //                     children: [
-                    //                       const SizedBox(width: 5),
-                    //                       largeErrorText(
-                    //                           formattedDuration(totalDuration)),
-                    //                       const SizedBox(width: 5),
-                    //                       largeErrorText('Hours'),
-                    //                     ],
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //               actions: [
-                    //                 TextButton(
-                    //                   onPressed: () {
-                    //                     Navigator.of(context).pop();
-                    //                   },
-                    //                   child: const Text('OK'),
-                    //                 ),
-                    //               ],
-                    //             );
-                    //           },
-                    //         );
-                    //       } else {
-                    //         showDialog(
-                    //           context: context,
-                    //           builder: (BuildContext context) {
-                    //             return AlertDialog(
-                    //               title: const Text('Calculation Results'),
-                    //               content: Column(
-                    //                 mainAxisSize: MainAxisSize.min,
-                    //                 children: [
-                    //                   mediumText('Projected Lime Consumed'),
-                    //                   Row(
-                    //                     mainAxisAlignment:
-                    //                         MainAxisAlignment.center,
-                    //                     children: [
-                    //                       const SizedBox(width: 10),
-                    //                       largeBoldText(_estimatedWeight(
-                    //                               totalWeight, totalDuration)
-                    //                           .toStringAsFixed(2)),
-                    //                       const SizedBox(width: 5),
-                    //                       largeText('Ton'),
-                    //                     ],
-                    //                   ),
-                    //                   const Divider(),
-                    //                   mediumText('Total Lime Weight'),
-                    //                   Row(
-                    //                     mainAxisAlignment:
-                    //                         MainAxisAlignment.center,
-                    //                     children: [
-                    //                       largeText(
-                    //                           totalWeight.toStringAsFixed(2)),
-                    //                       const SizedBox(width: 5),
-                    //                       largeText('Ton'),
-                    //                     ],
-                    //                   ),
-                    //                   const Divider(),
-                    //                   Column(
-                    //                     children: [
-                    //                       mediumText('Total Duration'),
-                    //                       Row(
-                    //                         mainAxisAlignment:
-                    //                             MainAxisAlignment.center,
-                    //                         children: [
-                    //                           const SizedBox(width: 5),
-                    //                           largeText(formattedDuration(
-                    //                               totalDuration)),
-                    //                           const SizedBox(width: 5),
-                    //                           largeText('Hours'),
-                    //                         ],
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //               actions: [
-                    //                 TextButton(
-                    //                   onPressed: () {
-                    //                     Navigator.of(context).pop();
-                    //                   },
-                    //                   child: const Text('OK'),
-                    //                 ),
-                    //               ],
-                    //             );
-                    //           },
-                    //         );
-                    //       }
-                    //     }
-                    //   },
-                    //   child: const Text('Calculate'),
-                    // ),
+// ElevatedButton(
+//   onPressed: () {
+//     if (_formKey.currentState!.validate()) {
+//       calculateTotals();
+//       if (totalDuration.inMinutes > 1440) {
+//         showDialog(
+//           context: context,
+//           builder: (BuildContext context) {
+//             return AlertDialog(
+//               title: smallText('Duration Exceeded'),
+//               content: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   errorText(
+//                       '⛔️ The total duration cannot exceed 24 hours.'),
+//                   Row(
+//                     mainAxisAlignment:
+//                         MainAxisAlignment.center,
+//                     children: [
+//                       const SizedBox(width: 5),
+//                       largeErrorText(
+//                           formattedDuration(totalDuration)),
+//                       const SizedBox(width: 5),
+//                       largeErrorText('Hours'),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//               actions: [
+//                 TextButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: const Text('OK'),
+//                 ),
+//               ],
+//             );
+//           },
+//         );
+//       } else {
+//         showDialog(
+//           context: context,
+//           builder: (BuildContext context) {
+//             return AlertDialog(
+//               title: const Text('Calculation Results'),
+//               content: Column(
+//                 mainAxisSize: MainAxisSize.min,
+//                 children: [
+//                   mediumText('Projected Lime Consumed'),
+//                   Row(
+//                     mainAxisAlignment:
+//                         MainAxisAlignment.center,
+//                     children: [
+//                       const SizedBox(width: 10),
+//                       largeBoldText(_estimatedWeight(
+//                               totalWeight, totalDuration)
+//                           .toStringAsFixed(2)),
+//                       const SizedBox(width: 5),
+//                       largeText('Ton'),
+//                     ],
+//                   ),
+//                   const Divider(),
+//                   mediumText('Total Lime Weight'),
+//                   Row(
+//                     mainAxisAlignment:
+//                         MainAxisAlignment.center,
+//                     children: [
+//                       largeText(
+//                           totalWeight.toStringAsFixed(2)),
+//                       const SizedBox(width: 5),
+//                       largeText('Ton'),
+//                     ],
+//                   ),
+//                   const Divider(),
+//                   Column(
+//                     children: [
+//                       mediumText('Total Duration'),
+//                       Row(
+//                         mainAxisAlignment:
+//                             MainAxisAlignment.center,
+//                         children: [
+//                           const SizedBox(width: 5),
+//                           largeText(formattedDuration(
+//                               totalDuration)),
+//                           const SizedBox(width: 5),
+//                           largeText('Hours'),
+//                         ],
+//                       ),
+//                     ],
+//                   ),
+//                 ],
+//               ),
+//               actions: [
+//                 TextButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: const Text('OK'),
+//                 ),
+//               ],
+//             );
+//           },
+//         );
+//       }
+//     }
+//   },
+//   child: const Text('Calculate'),
+// ),
