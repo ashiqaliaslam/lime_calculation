@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lime_calculation/color_schemes.g.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,21 +17,6 @@ class LimeData {
   });
 }
 
-// class LimeDataForm extends StatefulWidget {
-//   const LimeDataForm({super.key});
-
-//   @override
-//   State<LimeDataForm> createState() => _LimeDataFormState();
-// }
-
-// class _LimeDataFormState extends State<LimeDataForm> {
-//     List<LimeData> limeDataList = [];
-//   @override
-//   Widget build(BuildContext context) {
-//     return const Placeholder();
-//   }
-// }
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -38,10 +24,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Lime Data',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
       home: const LimeDataForm(),
     );
   }
@@ -60,211 +45,202 @@ class _LimeDataFormState extends State<LimeDataForm> {
   Duration totalDuration = const Duration();
   final _formKey = GlobalKey<FormState>();
 
+  double _estimatedWeight(double totalWeight, Duration totalDuration) {
+    if (totalDuration.inMinutes == 0) {
+      return 0;
+    }
+
+    double rateOfConsumption = totalWeight / totalDuration.inMinutes;
+    // calculate the projected weight in 24 hours
+    return rateOfConsumption * 24 * 60;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lime Data'),
-        backgroundColor: Colors.lightBlue,
-        centerTitle: true,
-        elevation: 5,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Total Lime Weight',
-                    style: TextStyle(
-                      fontSize: 20,
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Lime Data'),
+          backgroundColor: Colors.lightBlue,
+          centerTitle: true,
+          elevation: 5,
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: Column(
+                        children: [
+                          mediumText('Total Lime Weight'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              largeText(totalWeight.toStringAsFixed(2)),
+                              const SizedBox(width: 5),
+                              largeText('Ton'),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 25),
-                  Text(
-                    '$totalWeight',
-                    style: const TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  const Text(
-                    'Ton',
-                    style: TextStyle(
-                      fontSize: 30,
-                    ),
-                  ),
-                ],
-              ),
-              // Text(
-              //   '${totalWeight / totalDuration.inMinutes}',
-              //   style: const TextStyle(
-              //     color: Colors.black,
-              //   ),
-              // ),
-              if (totalDuration.inMinutes > 1440)
-                const Text(
-                  'The total duration cannot exceed 24 hours.',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+                    // const VerticalDivider(
+                    //   color: Colors.black,
+                    //   thickness: 2,
+                    // ),
+                    if (totalDuration.inMinutes > 1440)
+                      Flexible(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            errorText(
+                                '⛔️ The total duration cannot exceed 24 hours.'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(width: 5),
+                                largeErrorText(
+                                    formattedDuration(totalDuration)),
+                                const SizedBox(width: 5),
+                                largeErrorText('Hours'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (totalDuration.inMinutes <= 1440)
+                      Flexible(
+                        flex: 1,
+                        child: Column(
+                          children: [
+                            mediumText('Total Duration'),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(width: 5),
+                                largeText(formattedDuration(totalDuration)),
+                                const SizedBox(width: 5),
+                                largeText('Hours'),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                  ],
                 ),
-              if (totalDuration.inHours <= 24)
+                const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Total Duration:',
-                      style: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
+                    mediumText('Projected Lime Consumed'),
+                    const SizedBox(width: 10),
+                    largeBoldText(_estimatedWeight(totalWeight, totalDuration)
+                        .toStringAsFixed(2)),
                     const SizedBox(width: 5),
-                    Text(
-                      '${totalDuration.inHours}:${totalDuration.inMinutes.remainder(60)}',
-                      style: const TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    const Text(
-                      'Hours',
-                      style: TextStyle(
-                        fontSize: 30,
-                      ),
-                    ),
+                    largeText('Ton'),
                   ],
                 ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: limeDataList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Dismissible(
-                      key: ValueKey(limeDataList[index]),
-                      onDismissed: (DismissDirection direction) {
-                        setState(() {
-                          limeDataList.removeAt(index);
-                          calculateTotals();
-                        });
-                      },
-                      // onUpdate: (details) {
-                      //   calculateTotals();
-                      // },
-                      child: LimeDataField(
-                        limeData: limeDataList[index],
-                        onDelete: () {
+                const SizedBox(height: 10),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: limeDataList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Dismissible(
+                        key: ValueKey(limeDataList[index]),
+                        onDismissed: (DismissDirection direction) {
                           setState(() {
                             limeDataList.removeAt(index);
                             calculateTotals();
                           });
                         },
-                        // onDelete: Dismissible(),
-                        onWeightChanged: (weight) {
-                          setState(() {
-                            limeDataList[index].weight = weight;
-                            calculateTotals();
-                          });
-                        },
-                        onStartTimeChanged: (TimeOfDay startTime) {
-                          setState(() {
-                            limeDataList[index].startTime = startTime;
-                            calculateTotals();
-                          });
-                        },
-                        onEndTimeChanged: (TimeOfDay endTime) {
-                          setState(() {
-                            limeDataList[index].endTime = endTime;
-                            calculateTotals();
-                          });
-                        },
-                      ),
-                    );
-                  },
+                        // onUpdate: (details) {
+                        //   calculateTotals();
+                        // },
+                        child: LimeDataField(
+                          limeData: limeDataList[index],
+                          onDelete: () {
+                            setState(() {
+                              limeDataList.removeAt(index);
+                              calculateTotals();
+                            });
+                          },
+                          // onDelete: Dismissible(),
+                          onWeightChanged: (weight) {
+                            setState(() {
+                              limeDataList[index].weight = weight;
+                              calculateTotals();
+                            });
+                          },
+                          onStartTimeChanged: (TimeOfDay startTime) {
+                            setState(() {
+                              limeDataList[index].startTime = startTime;
+                              calculateTotals();
+                            });
+                          },
+                          onEndTimeChanged: (TimeOfDay endTime) {
+                            setState(() {
+                              limeDataList[index].endTime = endTime;
+                              calculateTotals();
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        limeDataList.add(LimeData(
-                            weight: 0,
-                            startTime: TimeOfDay.now(),
-                            endTime: TimeOfDay.now()));
-                      });
-                    },
-                    child: const Text('Add Data'),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        calculateTotals();
-                        if (totalDuration.inHours >= 24) {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Duration Exceeded'),
-                                content: const Text(
-                                    'The total duration cannot exceed 24 hours.'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Calculation Results'),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Total Lime Weight: $totalWeight'),
-                                    Text(
-                                        'Total Duration: ${totalDuration.inHours} hours and ${totalDuration.inMinutes.remainder(60)} minutes'),
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
-                      }
-                    },
-                    child: const Text('Calculate'),
-                  ),
-                ],
-              ),
-            ],
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          if (limeDataList.isNotEmpty) {
+                            limeDataList.add(
+                              LimeData(
+                                  weight: 0,
+                                  startTime: limeDataList.last.endTime,
+                                  endTime: TimeOfDay.now()),
+                            );
+                          } else {
+                            limeDataList.add(
+                              LimeData(
+                                weight: 0,
+                                startTime:
+                                    const TimeOfDay(hour: 00, minute: 00),
+                                endTime: TimeOfDay.now(),
+                              ),
+                            );
+                          }
+                        });
+                      },
+                      child: const Text('Add Data'),
+                    ),
+                    const SizedBox(width: 10),
+                    const ElevatedButton(
+                      onPressed: null,
+                      child: Row(
+                        children: [
+                          Icon(Icons.clear_all),
+                          SizedBox(width: 10),
+                          Text('Clear All'),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -294,6 +270,10 @@ class _LimeDataFormState extends State<LimeDataForm> {
       totalDuration += endDateTime.difference(startDateTime);
     }
   }
+
+  void removeTatals() {
+    limeDataList.clear();
+  }
 }
 
 class LimeDataField extends StatelessWidget {
@@ -319,16 +299,19 @@ class LimeDataField extends StatelessWidget {
     final limeConsumptionDuration =
         LimeConsumption.calculateDuration(limeData.startTime, limeData.endTime);
 
-    return Card(
-      elevation: 10,
-      // color: Colors.blue.shade100,
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Card(
+        elevation: 10,
+        // color: Colors.blue.shade100,
 
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+          child: SizedBox(
+            height: 70,
+            child: Row(
               children: [
                 Expanded(
                   child: TextFormField(
@@ -367,15 +350,7 @@ class LimeDataField extends StatelessWidget {
                   onTimeChanged: onEndTimeChanged,
                 )),
                 const SizedBox(width: 10),
-                Column(
-                  children: [
-                    const Text('Duration'),
-                    Text(
-                      limeConsumptionDuration,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
+                DurationWidget(duration: limeConsumptionDuration),
 
                 /// [delete icon]
                 // IconButton(
@@ -384,7 +359,7 @@ class LimeDataField extends StatelessWidget {
                 // ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -460,6 +435,95 @@ class LimeConsumption {
     Duration difference = endDateTime.difference(startDateTime);
     return '${difference.inHours.toString().padLeft(2, '0')}:${(difference.inMinutes % 60).toString().padLeft(2, '0')}';
   }
+}
+
+class DurationWidget extends StatelessWidget {
+  final String duration;
+
+  const DurationWidget({super.key, required this.duration});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        const Flexible(
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Text('Duration'),
+        ),
+        Flexible(
+          flex: 1,
+          fit: FlexFit.tight,
+          child: Text(
+            duration,
+            style: TextStyles.medium,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+String formattedDuration(Duration duration) {
+  final hours = duration.inHours.toString().padLeft(2, '0');
+  final minuts = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
+  return '$hours:$minuts';
+}
+
+class TextStyles {
+  static const TextStyle small = TextStyle(
+    fontSize: 14,
+  );
+  static const TextStyle medium = TextStyle(
+    fontSize: 16,
+  );
+  static const TextStyle large = TextStyle(
+    fontSize: 22,
+  );
+  static const TextStyle largeBold = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle error = TextStyle(
+    color: Colors.red,
+    fontSize: 16,
+    fontWeight: FontWeight.bold,
+  );
+  static const TextStyle largeError = TextStyle(
+    color: Colors.red,
+    fontSize: 22,
+    fontWeight: FontWeight.bold,
+  );
+}
+
+Widget smallText(String text) {
+  return Text(text, style: TextStyles.small, softWrap: true);
+}
+
+Widget mediumText(String text) {
+  return Text(text, style: TextStyles.medium, softWrap: true);
+}
+
+Widget largeText(String text) {
+  return Text(text, style: TextStyles.large, softWrap: true);
+}
+
+Widget largeBoldText(String text) {
+  return Text(text, style: TextStyles.largeBold, softWrap: true);
+}
+
+Widget largeErrorText(String text) {
+  return Text(text, style: TextStyles.largeError, softWrap: true);
+}
+
+Widget errorText(String text) {
+  return Text(
+    text,
+    style: TextStyles.error,
+    textAlign: TextAlign.center,
+    softWrap: true,
+  );
 }
 
 /// [TimePickerFormField]
@@ -617,3 +681,114 @@ class LimeConsumption {
 //     );
 //   }
 // }
+
+
+/// [elevated button for calculate data]
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     if (_formKey.currentState!.validate()) {
+                    //       calculateTotals();
+                    //       if (totalDuration.inMinutes > 1440) {
+                    //         showDialog(
+                    //           context: context,
+                    //           builder: (BuildContext context) {
+                    //             return AlertDialog(
+                    //               title: smallText('Duration Exceeded'),
+                    //               content: Column(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   errorText(
+                    //                       '⛔️ The total duration cannot exceed 24 hours.'),
+                    //                   Row(
+                    //                     mainAxisAlignment:
+                    //                         MainAxisAlignment.center,
+                    //                     children: [
+                    //                       const SizedBox(width: 5),
+                    //                       largeErrorText(
+                    //                           formattedDuration(totalDuration)),
+                    //                       const SizedBox(width: 5),
+                    //                       largeErrorText('Hours'),
+                    //                     ],
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //               actions: [
+                    //                 TextButton(
+                    //                   onPressed: () {
+                    //                     Navigator.of(context).pop();
+                    //                   },
+                    //                   child: const Text('OK'),
+                    //                 ),
+                    //               ],
+                    //             );
+                    //           },
+                    //         );
+                    //       } else {
+                    //         showDialog(
+                    //           context: context,
+                    //           builder: (BuildContext context) {
+                    //             return AlertDialog(
+                    //               title: const Text('Calculation Results'),
+                    //               content: Column(
+                    //                 mainAxisSize: MainAxisSize.min,
+                    //                 children: [
+                    //                   mediumText('Projected Lime Consumed'),
+                    //                   Row(
+                    //                     mainAxisAlignment:
+                    //                         MainAxisAlignment.center,
+                    //                     children: [
+                    //                       const SizedBox(width: 10),
+                    //                       largeBoldText(_estimatedWeight(
+                    //                               totalWeight, totalDuration)
+                    //                           .toStringAsFixed(2)),
+                    //                       const SizedBox(width: 5),
+                    //                       largeText('Ton'),
+                    //                     ],
+                    //                   ),
+                    //                   const Divider(),
+                    //                   mediumText('Total Lime Weight'),
+                    //                   Row(
+                    //                     mainAxisAlignment:
+                    //                         MainAxisAlignment.center,
+                    //                     children: [
+                    //                       largeText(
+                    //                           totalWeight.toStringAsFixed(2)),
+                    //                       const SizedBox(width: 5),
+                    //                       largeText('Ton'),
+                    //                     ],
+                    //                   ),
+                    //                   const Divider(),
+                    //                   Column(
+                    //                     children: [
+                    //                       mediumText('Total Duration'),
+                    //                       Row(
+                    //                         mainAxisAlignment:
+                    //                             MainAxisAlignment.center,
+                    //                         children: [
+                    //                           const SizedBox(width: 5),
+                    //                           largeText(formattedDuration(
+                    //                               totalDuration)),
+                    //                           const SizedBox(width: 5),
+                    //                           largeText('Hours'),
+                    //                         ],
+                    //                       ),
+                    //                     ],
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //               actions: [
+                    //                 TextButton(
+                    //                   onPressed: () {
+                    //                     Navigator.of(context).pop();
+                    //                   },
+                    //                   child: const Text('OK'),
+                    //                 ),
+                    //               ],
+                    //             );
+                    //           },
+                    //         );
+                    //       }
+                    //     }
+                    //   },
+                    //   child: const Text('Calculate'),
+                    // ),
